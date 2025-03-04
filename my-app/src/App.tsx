@@ -10,6 +10,7 @@ import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import StartNow from "./pages/StartNow";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Dashboard from "./pages/DashBoard";
 /**
  * Layout Component
  * - Conditionally renders Navbar and Footer based on the current route.
@@ -39,6 +40,7 @@ const App: React.FC = () => {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/startnow" element={<StartNow />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         </Routes>
       </Layout>
