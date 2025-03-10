@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { FaGoogle } from "react-icons/fa";
+import Logo from "../assets/logo.png"; // Ensure your logo is in `src/assets/`
 
 const StartNow: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,7 +10,7 @@ const StartNow: React.FC = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const navigate = useNavigate(); // React Router navigation
+  const navigate = useNavigate();
 
   const handleSignup = async () => {
     setMessage(""); // Clear previous messages
@@ -20,7 +21,7 @@ const StartNow: React.FC = () => {
     }
   
     try {
-      const response = await fetch("http://localhost:5002/api/signup", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -28,8 +29,12 @@ const StartNow: React.FC = () => {
   
       const data = await response.json();
       if (response.ok) {
-        setMessage("Signup successful! Redirecting... 🎉");
-        setTimeout(() => navigate("/dashboard"), 1500);
+        // ✅ Save token & user to localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+  
+        setMessage("Signup successful! Redirecting...");
+        setTimeout(() => navigate("/dashboard"), 1000); // Redirect after 1 sec
       } else {
         console.error("Signup error response:", data);
         setMessage(data.message);
@@ -39,22 +44,17 @@ const StartNow: React.FC = () => {
       setMessage("Server error. Please try again.");
     }
   };
+  
 
   return (
-    <div className="flex items-center justify-center w-screen h-screen bg-white-100 pt-16">
+    <div className="auth-page flex items-center justify-center w-screen h-screen bg-white-100 pt-16">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        
-        {/* Centered "My Website" Logo */}
         <div className="flex justify-center">
           <h1 className="text-2xl font-bold text-blue-600">
-            <Link to="/">My Website</Link>
+            <Link to="/"><img src={Logo} alt="ProLoc Logo" className="h-10 w-auto" /></Link>
           </h1>
         </div>
-
-        {/* Welcome Message */}
         <h2 className="text-2xl font-bold text-center mt-4 text-gray-800">Create an Account</h2>
-
-        {/* Email Input */}
         <div className="mt-6">
           <label className="block text-sm font-medium text-gray-700">Email address</label>
           <input
@@ -65,8 +65,6 @@ const StartNow: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
-        {/* Password Input with Show/Hide Toggle */}
         <div className="mt-4 relative">
           <label className="block text-sm font-medium text-gray-700">Password</label>
           <input
@@ -84,43 +82,33 @@ const StartNow: React.FC = () => {
             {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
           </button>
         </div>
-
-        {/* Show Error Messages */}
         {message && <p className="mt-3 text-center text-red-600">{message}</p>}
-
-        {/* Continue Button */}
         <button
           className="w-full mt-6 bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition"
           onClick={handleSignup}
         >
           Continue
         </button>
-
-        {/* Already Have an Account? Link */}
         <p className="text-center text-sm text-gray-600 mt-4">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
             Sign in
           </Link>
         </p>
-
-        {/* OR Divider */}
         <div className="flex items-center my-6">
           <div className="flex-grow border-t border-gray-300"></div>
           <span className="mx-3 text-gray-500 text-sm">or</span>
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
-
-        {/* Sign in with Google */}
         <button
-         className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition"
-        onClick={() => window.location.href = "http://localhost:5002/auth/google"}
-          >
-        <FaGoogle size={18} />
-          Sign up with Google
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition"
+          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
+        >
+          <FaGoogle size={18} />
+          Continue with Google
         </button>
 
-        {/* Privacy Policy */}
+
         <p className="text-center text-xs text-gray-500 mt-4">
           By registering, you agree to our{" "}
           <Link to="/privacy-policy" className="text-blue-600 underline">

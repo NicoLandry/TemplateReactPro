@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import Logo from "../assets/logo.png"; // Ensure your logo is in `src/assets/`
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,12 +14,12 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     setMessage(""); // Clear previous messages
-
+  
     if (!email || !password) {
       setMessage("All fields are required.");
       return;
     }
-
+  
     try {
       const response = await fetch("http://localhost:5002/api/login", {
         method: "POST",
@@ -27,32 +28,37 @@ const Login: React.FC = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
+      console.log("🔍 Server Response:", data); // Log response from backend
+  
       if (response.ok) {
         // Save token & user info
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-
+  
         setMessage("Login successful! Redirecting...");
+        console.log("✅ Navigating to /dashboard"); // Debug log
         setTimeout(() => navigate("/dashboard"), 1500); // Redirect after 1.5s
       } else {
         setMessage(data.message); // Show error message
+        console.error("❌ Login failed:", data.message);
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("❌ Login error:", error);
       setMessage("Server error. Please try again.");
     }
   };
+  
 
   return (
-    <div className="flex items-center justify-center w-screen h-screen bg-white-100 pt-16">
+    <div className="auth-page flex items-center justify-center w-screen h-screen bg-white-100 pt-16">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         
         {/* Centered "My Website" Logo */}
         <div className="flex justify-center">
           <h1 className="text-2xl font-bold text-blue-600">
-            <Link to="/">My Website</Link>
+            <Link to="/"><img src={Logo} alt="ProLoc Logo" className="h-10 w-auto" /></Link>
           </h1>
         </div>
 
@@ -118,12 +124,14 @@ const Login: React.FC = () => {
 
         {/* Sign in with Google */}
         <button
-        className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition"
-        onClick={() => window.location.href = "http://localhost:5002/auth/google"}
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition"
+          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
         >
           <FaGoogle size={18} />
-          Sign in with Google
+          Continue with Google
         </button>
+
+
 
         {/* Privacy Policy */}
         <p className="text-center text-xs text-gray-500 mt-4">

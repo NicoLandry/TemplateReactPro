@@ -17,7 +17,7 @@ import Dashboard from "./pages/DashBoard";
  */
 const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const hideHeaderFooter = location.pathname === "/login" || location.pathname === "/startnow";
+  const hideHeaderFooter = location.pathname === "/login" || location.pathname === "/startnow" || location.pathname ==="/dashboard";
 
   return (
     <div className="flex flex-col min-h-screen">
