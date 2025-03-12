@@ -2,46 +2,37 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import Logo from "../assets/logo.png"; // Ensure your logo is in `src/assets/`
+import Logo from "../assets/logo.png";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
   const handleLogin = async () => {
-    setMessage(""); // Clear previous messages
-  
+    setMessage("");
     if (!email || !password) {
       setMessage("All fields are required.");
       return;
     }
-  
     try {
-      const response = await fetch("http://localhost:5002/api/login", {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-  
       const data = await response.json();
-      console.log("🔍 Server Response:", data); // Log response from backend
-  
+      console.log("🔍 Server Response:", data);
       if (response.ok) {
-        // Save token & user info
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-  
         setMessage("Login successful! Redirecting...");
-        console.log("✅ Navigating to /dashboard"); // Debug log
-        setTimeout(() => navigate("/dashboard"), 1500); // Redirect after 1.5s
+        setTimeout(() => navigate("/dashboard"), 1500);
       } else {
-        setMessage(data.message); // Show error message
+        setMessage(data.message);
         console.error("❌ Login failed:", data.message);
       }
     } catch (error) {
@@ -49,23 +40,16 @@ const Login: React.FC = () => {
       setMessage("Server error. Please try again.");
     }
   };
-  
 
   return (
     <div className="auth-page flex items-center justify-center w-screen h-screen bg-white-100 pt-16">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        
-        {/* Centered "My Website" Logo */}
         <div className="flex justify-center">
           <h1 className="text-2xl font-bold text-blue-600">
             <Link to="/"><img src={Logo} alt="ProLoc Logo" className="h-10 w-auto" /></Link>
           </h1>
         </div>
-
-        {/* Welcome Message */}
         <h2 className="text-2xl font-bold text-center mt-4 text-gray-800">Welcome back</h2>
-
-        {/* Email Input */}
         <div className="mt-6">
           <label className="block text-sm font-medium text-gray-700">Email address</label>
           <input
@@ -76,8 +60,6 @@ const Login: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
-        {/* Password Input with Show/Hide Toggle */}
         <div className="mt-4 relative">
           <label className="block text-sm font-medium text-gray-700">Password</label>
           <input
@@ -95,45 +77,31 @@ const Login: React.FC = () => {
             {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
           </button>
         </div>
-
-        {/* Show Error Messages */}
         {message && <p className="mt-3 text-center text-red-600">{message}</p>}
-
-        {/* Continue Button */}
         <button
           className="w-full mt-6 bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition"
           onClick={handleLogin}
         >
           Continue
         </button>
-
-        {/* Sign Up Link */}
         <p className="text-center text-sm text-gray-600 mt-4">
           Don't have an account?{" "}
           <Link to="/startnow" className="text-blue-600 hover:underline">
             Sign up
           </Link>
         </p>
-
-        {/* OR Divider */}
         <div className="flex items-center my-6">
           <div className="flex-grow border-t border-gray-300"></div>
           <span className="mx-3 text-gray-500 text-sm">or</span>
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
-
-        {/* Sign in with Google */}
         <button
           className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition"
-          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
+          onClick={() => window.location.href = `${API_BASE_URL}/auth/google`}
         >
           <FaGoogle size={18} />
           Continue with Google
         </button>
-
-
-
-        {/* Privacy Policy */}
         <p className="text-center text-xs text-gray-500 mt-4">
           By registering, you agree to our{" "}
           <Link to="/privacy-policy" className="text-blue-600 underline">

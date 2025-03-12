@@ -2,39 +2,34 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { FaGoogle } from "react-icons/fa";
-import Logo from "../assets/logo.png"; // Ensure your logo is in `src/assets/`
+import Logo from "../assets/logo.png";
 
 const StartNow: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
   const handleSignup = async () => {
-    setMessage(""); // Clear previous messages
-  
+    setMessage("");
     if (!email || !password) {
       setMessage("All fields are required.");
       return;
     }
-  
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/signup`, {
+      const response = await fetch(`${API_BASE_URL}/api/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-  
       const data = await response.json();
       if (response.ok) {
-        // ✅ Save token & user to localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-  
         setMessage("Signup successful! Redirecting...");
-        setTimeout(() => navigate("/dashboard"), 1000); // Redirect after 1 sec
+        setTimeout(() => navigate("/dashboard"), 1000);
       } else {
         console.error("Signup error response:", data);
         setMessage(data.message);
@@ -44,7 +39,6 @@ const StartNow: React.FC = () => {
       setMessage("Server error. Please try again.");
     }
   };
-  
 
   return (
     <div className="auth-page flex items-center justify-center w-screen h-screen bg-white-100 pt-16">
@@ -102,13 +96,11 @@ const StartNow: React.FC = () => {
         </div>
         <button
           className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition"
-          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
+          onClick={() => window.location.href = `${API_BASE_URL}/auth/google`}
         >
           <FaGoogle size={18} />
           Continue with Google
         </button>
-
-
         <p className="text-center text-xs text-gray-500 mt-4">
           By registering, you agree to our{" "}
           <Link to="/privacy-policy" className="text-blue-600 underline">
