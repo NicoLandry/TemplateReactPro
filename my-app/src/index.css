@@ -31,10 +31,17 @@ body {
   min-height: 100vh;
 }
 
+/* Normal h1 size (default) */
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 1.5rem; /* ✅ Normal size for most pages */
+  line-height: 1.2;
 }
+
+/* Make h1 bigger ONLY on login/signup pages */
+.auth-page h1 {
+  font-size: 3.2em; /* ✅ Large for Login & Signup */
+}
+
 
 /* ---------------------------------------
    Instead of styling all <button> elements,
