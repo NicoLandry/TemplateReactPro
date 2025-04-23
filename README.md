@@ -100,6 +100,4 @@ The system can work with fillable PDF templates or generate PDFs from scratch:
 - If no fields are found or filled, the system will fall back to drawing text directly
 - For best results, use template field names related to their content (e.g., "tenant_name", "rent_amount")
 
-## License
 
-[License information]
